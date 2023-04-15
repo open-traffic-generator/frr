@@ -1,3 +1,22 @@
+# ARG - Define build-time variable
+# ADD - command helps in copying data (files, directory) into a Docker image. Additionally it lets you use URL location and unzip files into image.
+# COPY - copies new files or directories from <src> and adds them to the filesystem of the container at the path <dest> in a Docker image
+# CMD - allows you to set a default command which will be executed only when you run a container without 
+#       specifying a command. There can be only one CMD.
+# ENTRYPOINT - allows you to configure a container that will run as an executable. ENTRYPOINT command and parameters are not ignored when 
+#              Docker container runs with command line parameters.. provides command and arguments for an executing container.
+# EXPOSE - expose ports
+# ENV - provides default values for aenviornment variables that can be accessed within the container
+# FROM - specifies the base(parent) image. Alpine version is the minimal docker image based on base image 
+# LABEL - provides metada like maintainer.
+# MAINTAINER - declares the author field of the images
+# PULL - Adds files from your Docker repository
+# RUN -  runs a Linux command in the container. Used to install packages into container, create folders, etc
+# USER - By default, containers run as root. A container running as root has full control of the host system. Docker image should use the 
+#        USER instruction to specify a non-root user for containers to run as.
+# VOLUME - create a directory mount point to access and store persistent data.
+# WORKDIR - sets the working directory for the instructions that follow.
+
 FROM ubuntu:20.04
 
 ARG DEBIAN_FRONTEND=noninteractive
@@ -12,7 +31,7 @@ RUN apt update && \
       libcap-dev python2 libelf-dev libprotobuf-c-dev protobuf-c-compiler \
       sudo gdb curl iputils-ping time \
       lua5.3 liblua5.3-dev \
-      net-tools iproute2 && \
+      net-tools iproute2 tcpdump traceroute && \
       curl https://bootstrap.pypa.io/pip/2.7/get-pip.py --output /tmp/get-pip.py && \
       python2 /tmp/get-pip.py && \
       rm -f  /tmp/get-pip.py && \
@@ -52,6 +71,8 @@ COPY --chown=frr:frr . /home/frr/frr/
 
 RUN cd && ls -al && ls -al frr
 
+RUN sudo mkdir /etc/frr
+RUN sudo chown frr:frr /etc/frr
 RUN cd ~/frr && \
     ./bootstrap.sh && \
     ./configure \
@@ -74,5 +95,10 @@ RUN cd ~/frr && \
 
 RUN cd ~/frr && make check || true
 
+# Own the config / PID files
+RUN sudo mkdir -p /var/run/frr
+RUN sudo chown -R frr:frr /var/run/frr
+
 COPY docker/ubuntu20-ci/docker-start /usr/sbin/docker-start
-CMD ["/usr/sbin/docker-start"]
+COPY docker/ubuntu20-ci/vtysh.conf /etc/frr/vtysh.conf
+ENTRYPOINT ["/usr/sbin/docker-start"]

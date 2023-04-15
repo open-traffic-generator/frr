@@ -5,4 +5,27 @@ if [ $(uname -a | grep -ci Ubuntu) -ge 1 ]; then
     sudo modprobe mpls-router mpls-iptunnel
     sudo /etc/init.d/openvswitch-switch start
 fi
+
+# Set password for the frr user
+#echo 'frr:frr' | sudo chpasswd
+
+# A default dirctory emplty vtysh config is needed for frr to work
+#sudo mkdir /etc/frr 
+#sudo chmod 777 /etc/frr 
+#touch /etc/frr/vtysh.conf
+
+# start few daemons
+
+#sudo /usr/lib/frr/zebra -s 90000000 --daemon -A 127.0.0.1 -F traditional
+#sudo /usr/lib/frr/staticd --daemon -A 127.0.0.1 -F traditional
+#sudo /usr/lib/frr/bgpd --daemon -A 127.0.0.1 -l 0.0.0.0 -F traditional
+#sudo /usr/lib/frr/isisd --daemon -A 127.0.0.1 -F traditional
+
+source /usr/lib/frr/frrcommon.sh
+sudo /usr/lib/frr/watchfrr $(daemon_list)
+
+#sudo service ssh start
+#sleep 5
+#vtysh -b 
+
 while true ; do sleep 365d ; done
