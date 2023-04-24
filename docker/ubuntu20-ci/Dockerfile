@@ -101,4 +101,5 @@ RUN sudo chown -R frr:frr /var/run/frr
 
 COPY docker/ubuntu20-ci/docker-start /usr/sbin/docker-start
 COPY docker/ubuntu20-ci/vtysh.conf /etc/frr/vtysh.conf
+COPY docker/ubuntu20-ci/frr-daemon-conf.txt /etc/frr/daemons
 ENTRYPOINT ["/usr/sbin/docker-start"]
