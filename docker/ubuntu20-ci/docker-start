@@ -21,12 +21,14 @@ fi
 #fi
 
 # Set password for the frr user
-#echo 'frr:frr' | sudo chpasswd
+echo 'frr:frr' | sudo chpasswd
 
 # A default dirctory emplty vtysh config is needed for frr to work
 #sudo mkdir /etc/frr 
-#sudo chmod 777 /etc/frr 
+sudo chmod 777 /etc/frr 
 #touch /etc/frr/vtysh.conf
+
+sudo service ssh start
 
 # start few daemons
 
